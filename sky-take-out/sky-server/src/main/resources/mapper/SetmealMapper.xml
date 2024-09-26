@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sky.mapper.SetmealMapper">
+
+    <insert id="insertSetmeal">
+        insert into setmeal
+        (category_id, name, price, status, description, image, create_time, update_time, create_user, update_user)
+        VALUES (#{categoryId}, #{name}, #{price}, #{status}, #{description}, #{image}, #{createTime}, #{updateTime},
+                #{createUser}, #{updateUser})
+
+    </insert>
+    <delete id="delete">
+        delete from setmeal where id like
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+                   #{id}
+        </foreach>
+    </delete>
+    <select id="selectQuery" resultType="com.sky.vo.SetmealVO">
+        select * from setmeal
+        <where>
+            <if test="categoryId!=null">category_id=#{categoryId}</if>
+            <if test="status!=null">and status=#{status}</if>
+            <if test="name!=null and name!=''">and name=#{name}</if>
+        </where>
+        order by update_time desc
+    </select>
+    <select id="list" parameterType="Setmeal" resultType="Setmeal">
+        select * from setmeal
+        <where>
+            <if test="name != null">
+                and name like concat('%',#{name},'%')
+            </if>
+            <if test="categoryId != null">
+                and category_id = #{categoryId}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+    </select>
+    <update id="update">
+        <!-- 动态更新Setmeal -->
+            UPDATE setmeal
+            <set>
+                <if test="name != null">
+                    name = #{name},
+                </if>
+                <if test="price != null">
+                    price = #{price},
+                </if>
+                <if test="status != null">
+                    status = #{status},
+                </if>
+                <if test="description != null">
+                    description = #{description},
+                </if>
+                <if test="image != null">
+                    image = #{image},
+                </if>
+                <if test="createUser != null">
+                    create_user = #{createUser},
+                </if>
+                <if test="updateUser != null">
+                    update_user = #{updateUser},
+                </if>
+                <!-- 注意：通常我们不会直接更新createTime，但如果你有这个需求，也可以加入 -->
+                <!-- <if test="createTime != null">
+                    create_time = #{createTime},
+                </if> -->
+                <if test="updateTime != null">
+                    update_time = #{updateTime},
+                </if>
+            </set>
+            WHERE id = #{id}
+
+    </update>
+</mapper>
